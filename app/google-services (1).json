@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "149436593993",
+    "project_id": "sdk-android-dfa5d",
+    "storage_bucket": "sdk-android-dfa5d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149436593993:android:8f81f5fdcfee15facb8c98",
+        "android_client_info": {
+          "package_name": "com.example.sdk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaA4AITMDYq8ZpXmUcXHk0m90yQPLZvQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
