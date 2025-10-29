@@ -1,87 +1,118 @@
 package com.example.sdk;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.FitnessOptions;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.data.HealthDataTypes;
-import com.google.android.gms.fitness.data.HealthFields;
+import com.google.android.gms.fitness.request.DataReadRequest;
+import com.google.android.gms.fitness.result.DataReadResponse;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GoogleFitManager {
-
     private static final String TAG = "GoogleFitManager";
+    private final Activity activity;
+    private GoogleSignInAccount account;
+    private final FitnessOptions fitnessOptions;
+    public static final int FIT_PERMISSIONS_REQUEST_CODE = 1001;
 
-    public interface FitDataCallback {
-        void onDataReceived(SmartWatchData data);
-        void onError(Exception e);
+    public GoogleFitManager(Activity activity) {
+        this.activity = activity;
+
+        FitnessOptions.Builder builder = FitnessOptions.builder()
+                .addDataType(DataType.TYPE_HEART_RATE_BPM, FitnessOptions.ACCESS_READ)
+                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ);
+
+        // Safely add optional data types (not always available)
+        try {
+            Class<?> dt = Class.forName("com.google.android.gms.fitness.data.HealthDataTypes");
+            builder.addDataType((DataType) dt.getField("TYPE_BODY_TEMPERATURE").get(null), FitnessOptions.ACCESS_READ);
+            builder.addDataType((DataType) dt.getField("TYPE_OXYGEN_SATURATION").get(null), FitnessOptions.ACCESS_READ);
+        } catch (Throwable ignored) {
+            Log.w(TAG, "⚠️ Skipping optional Fit data types");
+        }
+
+        fitnessOptions = builder.build();
     }
 
-    public static void loadLatestHealthDataAsync(Context context, FitDataCallback callback) {
-        SmartWatchData data = new SmartWatchData();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+    public boolean hasPermission() {
+        account = GoogleSignIn.getAccountForExtension(activity, fitnessOptions);
+        return GoogleSignIn.hasPermissions(account, fitnessOptions);
+    }
 
-        if (account == null) {
-            callback.onError(new Exception("No Google account signed in"));
+    public void requestPermission() {
+        account = GoogleSignIn.getAccountForExtension(activity, fitnessOptions);
+        if (!GoogleSignIn.hasPermissions(account, fitnessOptions)) {
+            GoogleSignIn.requestPermissions(activity, FIT_PERMISSIONS_REQUEST_CODE, account, fitnessOptions);
+        }
+    }
+
+    public void handlePermissionResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FIT_PERMISSIONS_REQUEST_CODE) {
+            if (hasPermission()) {
+                Toast.makeText(activity, "✅ Google Fit permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(activity, "❌ Permission denied — using CSV only", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void fetchFitData(FitDataCallback callback) {
+        if (!hasPermission()) {
+            callback.onFailure(new Exception("Permission not granted"));
             return;
         }
 
-        // Heart Rate
-        Fitness.getHistoryClient(context, account)
-                .readDailyTotal(DataType.TYPE_HEART_RATE_BPM)
-                .addOnSuccessListener(dataSet -> {
-                    if (!dataSet.isEmpty()) {
-                        int hr = Math.round(dataSet.getDataPoints().get(0)
-                                .getValue(Field.FIELD_AVERAGE).asFloat());
-                        data.setHeartRate(hr);
-                        Log.d(TAG, "❤️ HR: " + hr);
-                    }
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "HR fetch failed", e));
+        long end = System.currentTimeMillis();
+        long start = end - TimeUnit.HOURS.toMillis(24);
 
-        // SpO₂
-        Fitness.getHistoryClient(context, account)
-                .readDailyTotal(HealthDataTypes.TYPE_OXYGEN_SATURATION)
-                .addOnSuccessListener(dataSet -> {
-                    if (!dataSet.isEmpty()) {
-                        int spo2 = Math.round(dataSet.getDataPoints().get(0)
-                                .getValue(HealthFields.FIELD_OXYGEN_SATURATION).asFloat());
-                        data.setSpo2(spo2);
-                        Log.d(TAG, "🩸 SpO2: " + spo2);
-                    }
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "SpO2 fetch failed", e));
+        DataReadRequest request = new DataReadRequest.Builder()
+                .read(DataType.TYPE_HEART_RATE_BPM)
+                .read(DataType.TYPE_STEP_COUNT_DELTA)
+                .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+                .build();
 
-        // Temperature
-        Fitness.getHistoryClient(context, account)
-                .readDailyTotal(HealthDataTypes.TYPE_BODY_TEMPERATURE)
-                .addOnSuccessListener(dataSet -> {
-                    if (!dataSet.isEmpty()) {
-                        double temp = dataSet.getDataPoints().get(0)
-                                .getValue(HealthFields.FIELD_BODY_TEMPERATURE).asFloat();
-                        data.setTemperature(temp);
-                        Log.d(TAG, "🌡 Temp: " + temp);
-                    }
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "Temp fetch failed", e));
+        Fitness.getHistoryClient(activity, account)
+                .readData(request)
+                .addOnSuccessListener(response -> callback.onSuccess(parseFitResponse(response)))
+                .addOnFailureListener(callback::onFailure);
+    }
 
-        // Steps
-        Fitness.getHistoryClient(context, account)
-                .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
-                .addOnSuccessListener(dataSet -> {
-                    if (!dataSet.isEmpty()) {
-                        int steps = dataSet.getDataPoints().get(0)
-                                .getValue(Field.FIELD_STEPS).asInt();
-                        data.setSteps(steps);
-                        Log.d(TAG, "👣 Steps: " + steps);
-                    }
+    private List<SmartWatchData> parseFitResponse(DataReadResponse response) {
+        List<SmartWatchData> list = new ArrayList<>();
+        for (DataSet set : response.getDataSets()) {
+            for (DataPoint dp : set.getDataPoints()) {
+                SmartWatchData d = new SmartWatchData();
+                d.setTimestamp(dp.getEndTime(TimeUnit.MILLISECONDS));
 
-                    // ✅ Return after all metrics collected
-                    callback.onDataReceived(data);
-                })
-                .addOnFailureListener(callback::onError);
+                for (Field f : dp.getDataType().getFields()) {
+                    float v = dp.getValue(f).asFloat();
+                    switch (f.getName()) {
+                        case "heart_rate.bpm": d.setHeartRate((int) v); break;
+                        case "steps": d.setSteps((int) v); break;
+                        case "oxygen_saturation": d.setSpO2(v); break;
+                        case "body_temperature": d.setTemperature(v); break;
+                    }
+                }
+                list.add(d);
+            }
+        }
+        return list;
+    }
+
+    public interface FitDataCallback {
+        void onSuccess(List<SmartWatchData> fitList);
+        void onFailure(Exception e);
     }
 }
