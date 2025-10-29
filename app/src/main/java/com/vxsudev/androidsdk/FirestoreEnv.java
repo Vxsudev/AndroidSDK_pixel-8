@@ -1,4 +1,4 @@
-package com.example.sdk;
+package com.vxsudev.androidsdk;
 
 public enum FirestoreEnv {
     DEFAULT("google-services.json"),

@@ -1,4 +1,4 @@
-package com.example.sdk;
+package com.vxsudev.androidsdk;
 
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;

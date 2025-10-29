@@ -1,4 +1,4 @@
-package com.example.sdk;
+package com.vxsudev.androidsdk;
 
 import android.app.Activity;
 import android.content.Intent;
