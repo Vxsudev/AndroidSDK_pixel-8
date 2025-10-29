@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.sdk"
-    compileSdk = 36 // ✅ Updated to latest API as required
+    namespace = "com.vxsudev.androidsdk"
+    compileSdk = 34 // Android 14 (stable)
 
     defaultConfig {
-        applicationId = "com.example.sdk"
+        applicationId = "com.vxsudev.androidsdk"
         minSdk = 26
-        targetSdk = 36 // ✅ Matches compileSdk for full compatibility
+        targetSdk = 34 // Matches compileSdk for full compatibility
         versionCode = 1
         versionName = "1.0"
 
@@ -20,11 +20,17 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // TODO: Configure signing before release:
+            // 1. Generate keystore: keytool -genkey -v -keystore release.jks -alias release -keyalg RSA -keysize 2048 -validity 10000
+            // 2. Add keystore file (keep it secure, don't commit to git)
+            // 3. Uncomment and configure signingConfig below
+            // signingConfig = signingConfigs.getByName("release")
         }
         debug {
             isMinifyEnabled = false
