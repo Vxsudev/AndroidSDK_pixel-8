@@ -127,14 +127,14 @@
   }
 }</component>
   <component name="GithubDefaultAccount">
-    <option name="defaultAccountId" value="e9b48e4e-0985-4ccb-9314-717a1d75d3e6" />
+    <option name="defaultAccountId" value="882ac814-61cc-44dd-b868-5cb0e43c7823" />
   </component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/TejaswiniHN2103-sys/AndroidSDK_pixel-8&quot;,
-    &quot;accountId&quot;: &quot;e9b48e4e-0985-4ccb-9314-717a1d75d3e6&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/TejaswiniHN2103-sys/AndroidSDK_pixel-8",
+    "accountId": "882ac814-61cc-44dd-b868-5cb0e43c7823"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
     <option name="sortByName" value="true" />
