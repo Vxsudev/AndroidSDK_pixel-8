@@ -123,11 +123,9 @@ public class CloudStorageManager {
      * Returns null if file not found or parsing fails.
      */
     private static FirebaseOptions parseFirebaseOptionsFromAsset(Context context, String assetFilename) {
-        InputStream inputStream = null;
-        BufferedReader reader = null;
-        try {
-            inputStream = context.getAssets().open(assetFilename);
-            reader = new BufferedReader(new InputStreamReader(inputStream));
+        try (InputStream inputStream = context.getAssets().open(assetFilename);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            
             StringBuilder jsonBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -160,13 +158,6 @@ public class CloudStorageManager {
         } catch (Exception e) {
             Log.e(TAG, "❌ Failed to parse " + assetFilename, e);
             return null;
-        } finally {
-            try {
-                if (reader != null) reader.close();
-                if (inputStream != null) inputStream.close();
-            } catch (Exception e) {
-                Log.e(TAG, "Error closing streams", e);
-            }
         }
     }
 
