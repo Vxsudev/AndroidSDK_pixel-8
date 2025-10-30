@@ -3,8 +3,10 @@ package com.vxsudev.androidsdk;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.FirebaseApp;
 import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -12,13 +14,19 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private Button btnGenerate;
+    private Button btnApplyEnv;
     private TextView tvSource;
     private LinearLayout chartContainer;
+    private Spinner envSpinner;
 
     private CSVDataLoader csvDataLoader;
     private DataVisualizer dataVisualizer;
     private FirestoreManager firestoreManager;
     private GoogleFitManager googleFitManager;
+    private CloudStorageManager cloudStorageManager;
+
+    // Environment configurations
+    private Map<String, String> environmentConfigs = new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +34,84 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnGenerate = findViewById(R.id.btnGenerateData);
+        btnApplyEnv = findViewById(R.id.btnApplyEnv);
         tvSource = findViewById(R.id.tvSource);
         chartContainer = findViewById(R.id.chartContainer);
+        envSpinner = findViewById(R.id.envSpinner);
 
         csvDataLoader = new CSVDataLoader();
         dataVisualizer = new DataVisualizer();
         firestoreManager = new FirestoreManager();
         googleFitManager = new GoogleFitManager(this);
 
+        setupEnvironmentSelector();
         btnGenerate.setOnClickListener(v -> handleGenerateClick());
+    }
+
+    /**
+     * Setup environment selector with available environments
+     */
+    private void setupEnvironmentSelector() {
+        // Map environment names to asset filenames
+        // Use .template suffix for files that are templates in the repo
+        environmentConfigs.put("Default", null); // null = use default FirebaseApp
+        environmentConfigs.put("Dev", "google-services-dev.json");
+        environmentConfigs.put("Staging", "google-services-staging.json");
+
+        // Setup spinner adapter
+        List<String> envNames = new ArrayList<>(environmentConfigs.keySet());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                envNames
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        envSpinner.setAdapter(adapter);
+
+        // Wire apply button
+        btnApplyEnv.setOnClickListener(v -> handleEnvironmentSwitch());
+
+        Log.d(TAG, "✅ Environment selector initialized with " + envNames.size() + " environments");
+    }
+
+    /**
+     * Handle environment switch when Apply button is clicked
+     */
+    private void handleEnvironmentSwitch() {
+        String selectedEnv = (String) envSpinner.getSelectedItem();
+        String assetFilename = environmentConfigs.get(selectedEnv);
+
+        Log.d(TAG, "🔄 Switching to environment: " + selectedEnv + " (config: " + assetFilename + ")");
+
+        try {
+            FirebaseApp app = CloudStorageManager.getFirebaseAppForEnvironment(this, assetFilename);
+            
+            if (app != null) {
+                // Successfully initialized or retrieved FirebaseApp
+                cloudStorageManager = new CloudStorageManager(this, assetFilename);
+                
+                String projectId = app.getOptions().getProjectId();
+                String storageBucket = app.getOptions().getStorageBucket();
+                
+                String message = "✅ Switched to " + selectedEnv + "\n" +
+                        "ProjectId: " + projectId + "\n" +
+                        "Bucket: " + storageBucket;
+                
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                Log.d(TAG, message);
+            } else {
+                // Failed to initialize - show user-friendly error
+                String errorMsg = "⚠️ Config file not found for " + selectedEnv + 
+                        "\nAdd " + assetFilename + " to assets/ to use this environment";
+                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                Log.w(TAG, errorMsg);
+            }
+
+        } catch (Exception e) {
+            String errorMsg = "❌ Failed to switch to " + selectedEnv + ": " + e.getMessage();
+            Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Environment switch failed", e);
+        }
     }
 
     private void handleGenerateClick() {
