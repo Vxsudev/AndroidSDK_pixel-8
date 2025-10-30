@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.vxsudev.androidsdk"
         minSdk = 26
-        targetSdk = 36 // Matches compileSdk for full compatibility
+        targetSdk = 34 // Matches compileSdk for full compatibility
         versionCode = 1
         versionName = "1.0"
 
