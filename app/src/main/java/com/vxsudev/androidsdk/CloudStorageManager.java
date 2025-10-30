@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +125,7 @@ public class CloudStorageManager {
      */
     private static FirebaseOptions parseFirebaseOptionsFromAsset(Context context, String assetFilename) {
         try (InputStream inputStream = context.getAssets().open(assetFilename);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             
             StringBuilder jsonBuilder = new StringBuilder();
             String line;
