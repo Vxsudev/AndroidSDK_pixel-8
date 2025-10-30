@@ -1,17 +1,17 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services") // ✅ Required for Firebase
 }
 
 android {
     namespace = "com.vxsudev.androidsdk"
-    compileSdk = 34 // Android 14 (stable)
+    compileSdk = 36 // Android 15+ for AndroidX 1.17.x compatibility
 
     defaultConfig {
         applicationId = "com.vxsudev.androidsdk"
         minSdk = 26
-        targetSdk = 34 // Matches compileSdk for full compatibility
+        targetSdk = 36 // Matches compileSdk for full compatibility
         versionCode = 1
         versionName = "1.0"
 
