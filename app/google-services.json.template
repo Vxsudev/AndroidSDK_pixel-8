@@ -1,0 +1,41 @@
+{
+  "_comment": "This is a TEMPLATE file for the default Firebase configuration.",
+  "_instructions": [
+    "DO NOT commit real Firebase credentials to the repository!",
+    "To build and run the app:",
+    "1. Copy this file to google-services.json (without .template) in the app/ directory",
+    "2. Replace the placeholder values below with your actual Firebase project settings",
+    "3. The file google-services.json is already in .gitignore and will not be committed",
+    "",
+    "For CI/CD builds:",
+    "- Use GitHub Secrets to inject google-services.json during the build process",
+    "- Or disable the google-services plugin and use runtime initialization only"
+  ],
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "your-default-project-id",
+    "storage_bucket": "your-default-project-id.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+        "android_client_info": {
+          "package_name": "com.vxsudev.androidsdk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "YOUR_DEFAULT_API_KEY_HERE_REPLACE_ME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

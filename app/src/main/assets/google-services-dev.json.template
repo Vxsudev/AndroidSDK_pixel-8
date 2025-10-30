@@ -1,0 +1,44 @@
+{
+  "_comment": "This is a TEMPLATE file for the Dev environment Firebase configuration.",
+  "_instructions": [
+    "DO NOT commit real Firebase credentials to the repository!",
+    "To use this environment:",
+    "1. Copy this file to google-services-dev.json (without .template)",
+    "2. Replace the placeholder values below with your actual Dev Firebase project settings",
+    "3. Make sure google-services-dev.json is in .gitignore (it already should be)",
+    "",
+    "To get your real configuration:",
+    "1. Go to Firebase Console (https://console.firebase.google.com/)",
+    "2. Select your Dev project",
+    "3. Go to Project Settings > General",
+    "4. Scroll to 'Your apps' and download google-services.json",
+    "5. Rename it to google-services-dev.json and place it in this directory"
+  ],
+  "project_info": {
+    "project_number": "123456789000",
+    "project_id": "your-dev-project-id",
+    "storage_bucket": "your-dev-project-id.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123456789000:android:abcdef1234567890",
+        "android_client_info": {
+          "package_name": "com.vxsudev.androidsdk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "YOUR_DEV_API_KEY_HERE_REPLACE_ME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

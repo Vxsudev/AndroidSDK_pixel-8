@@ -40,10 +40,13 @@ release.jks
 release.keystore
 
 # Firebase and sensitive configs (use CI/CD to inject these)
+# Exclude real config files but allow .template files
 google-services.json
 app/google-services.json
 app/google-services*.json
+!app/google-services*.json.template
 app/src/*/assets/google-services*.json
+!app/src/*/assets/google-services*.json.template
 
 # Local configuration file (SDK path, etc)
 local.properties
