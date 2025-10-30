@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.vxsudev.androidsdk"
-    compileSdk = 34 // Android 14 (stable)
+    compileSdk = 36 // Android 15 for AndroidX 1.17 compatibility
 
     defaultConfig {
         applicationId = "com.vxsudev.androidsdk"
         minSdk = 26
-        targetSdk = 34 // Matches compileSdk for full compatibility
+        targetSdk = 36 // Matches compileSdk for full compatibility
         versionCode = 1
         versionName = "1.0"
 
@@ -70,6 +70,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     // ✅ AndroidX + Material dependencies
+    implementation("androidx.core:core:1.17.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
