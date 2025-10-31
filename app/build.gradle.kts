@@ -1,39 +1,29 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    id("com.google.gms.google-services") // ✅ Required for Firebase
+    id("com.android.application") version "8.9.1"
+    id("org.jetbrains.kotlin.android") version "1.9.24"
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.vxsudev.androidsdk"
-    compileSdk = 36 // Android 14 (stable)
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.vxsudev.androidsdk"
-        minSdk = 26
-        targetSdk = 36 // Matches compileSdk for full compatibility
+        minSdk = 24
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // TODO: Configure signing before release:
-            // 1. Generate keystore: keytool -genkey -v -keystore release.jks -alias release -keyalg RSA -keysize 2048 -validity 10000
-            // 2. Add keystore file (keep it secure, don't commit to git)
-            // 3. Uncomment and configure signingConfig below
-            // signingConfig = signingConfigs.getByName("release")
-        }
-        debug {
-            isMinifyEnabled = false
         }
     }
 
@@ -45,45 +35,19 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-    buildFeatures {
-        viewBinding = true
-    }
 }
 
 dependencies {
-    // ✅ Firebase dependencies (via BoM)
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-storage")
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    // ✅ Google Fit APIs
-    implementation("com.google.android.gms:play-services-fitness:21.1.0")
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
 
-    // ✅ MPAndroidChart for charts
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-
-    // ✅ Gson for JSON parsing
-    implementation("com.google.code.gson:gson:2.10.1")
-
-    // ✅ AndroidX + Material dependencies
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-
-    // ✅ Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
-repositories {
-    google()
-    mavenCentral()
-    maven { url = uri("https://jitpack.io") }
-}
