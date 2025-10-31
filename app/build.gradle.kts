@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.gms.google-services") // ✅ Required for Firebase
+    // Temporarily disabled due to network restrictions
+    // id("com.google.gms.google-services") // ✅ Required for Firebase
 }
 
 android {
@@ -52,19 +53,17 @@ android {
 }
 
 dependencies {
+    // Temporarily disabled due to network restrictions preventing access to Google Maven
     // ✅ Firebase dependencies (via BoM)
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-storage")
+    // implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    // implementation("com.google.firebase:firebase-analytics")
+    // implementation("com.google.firebase:firebase-firestore")
+    // implementation("com.google.firebase:firebase-auth")
+    // implementation("com.google.firebase:firebase-storage")
 
     // ✅ Google Fit APIs
-    implementation("com.google.android.gms:play-services-fitness:21.1.0")
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
-
-    // ✅ MPAndroidChart for charts
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    // implementation("com.google.android.gms:play-services-fitness:21.1.0")
+    // implementation("com.google.android.gms:play-services-auth:21.2.0")
 
     // ✅ Gson for JSON parsing
     implementation("com.google.code.gson:gson:2.10.1")
@@ -80,10 +79,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-}
-
-repositories {
-    google()
-    mavenCentral()
-    maven { url = uri("https://jitpack.io") }
 }
