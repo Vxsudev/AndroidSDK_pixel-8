@@ -77,9 +77,25 @@ If you have access to a machine with unrestricted internet:
    ./gradlew assembleDebug --offline
    ```
 
-### Solution 4: Use Alternative Build System
-Consider using a CI/CD system that has access to Google's repositories:
-- GitHub Actions
+### Solution 4: Use GitHub Actions (Recommended for Quick Testing)
+A GitHub Actions workflow has been added at `.github/workflows/build-debug-apk.yml` that will:
+- Automatically build the debug APK on push/PR
+- Upload the built APK as an artifact
+- Run in an environment with full internet access
+
+To use:
+1. Push your changes to GitHub
+2. Go to Actions tab in your repository
+3. Find the "Build Debug APK" workflow
+4. Download the built APK from the artifacts
+
+Alternatively, trigger a manual build:
+1. Go to Actions → Build Debug APK
+2. Click "Run workflow"
+3. Download the artifact once complete
+
+### Solution 5: Use Other CI/CD Systems
+Consider using other CI/CD systems that have access to Google's repositories:
 - GitLab CI
 - CircleCI
 - Travis CI
