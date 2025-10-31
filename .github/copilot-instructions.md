@@ -16,7 +16,7 @@ This is an Android health and fitness tracking application built for Pixel 8 dev
 - **UI**: XML layouts with ViewBinding
 - **Backend**: Firebase (Analytics, Firestore, Auth, Storage)
 - **Health Data**: Google Fit API
-- **Charts**: MPAndroidChart v3.1.0
+- **Charts**: MPAndroidChart (see build.gradle.kts for current version)
 - **JSON**: Gson
 - **Testing**: JUnit, AndroidX Test, Espresso
 
