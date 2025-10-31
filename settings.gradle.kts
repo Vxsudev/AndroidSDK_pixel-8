@@ -1,6 +1,7 @@
 pluginManagement {
     repositories {
-        google {
+        maven { 
+            url = uri("https://maven.google.com")
             content {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
@@ -9,16 +10,16 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        maven { url = uri("https://jitpack.io") } // ✅ Needed for MPAndroidChart
     }
 }
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
-        google()
+        maven { 
+            url = uri("https://maven.google.com")
+        }
         mavenCentral()
-        maven { url = uri("https://jitpack.io") } // ✅ Keep it here for libraries like MPAndroidChart
     }
 }
 
