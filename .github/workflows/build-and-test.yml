@@ -2,9 +2,9 @@ name: Build and Test
 
 on:
   push:
-    branches: ["*"]
+    branches: [ "**" ]
   pull_request:
-    branches: ["*"]
+    branches: [ "**" ]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -16,6 +16,7 @@ env:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,13 +30,26 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Force AGP + Kotlin plugin versions
+        run: |
+          echo "id('com.android.application') version '8.9.1' apply false" > forced_plugins.gradle.kts
+          echo "id('org.jetbrains.kotlin.android') version '1.9.24' apply false" >> forced_plugins.gradle.kts
+          echo "id('com.google.gms.google-services') version '4.4.2' apply false" >> forced_plugins.gradle.kts
+
+      - name: Ensure correct Gradle wrapper version
+        run: |
+          sed -i 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-8.9-bin.zip|' gradle/wrapper/gradle-wrapper.properties
+
+      - name: Clear Gradle cache
+        run: rm -rf ~/.gradle/caches
+
       - name: Create placeholder google-services.json for CI build
         run: |
           mkdir -p app
           echo '{}' > app/google-services.json
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace --refresh-dependencies
 
       - name: Lint Check
         run: ./gradlew lint
